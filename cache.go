@@ -36,12 +36,17 @@ type cacheCall[V any] struct {
 // ttl doesn't make every Set scan the whole map.
 const minSweepInterval = time.Minute
 
+// errLoaderPanicked is returned by GetOrSet to callers that waited for a load
+// that panicked. The panic itself propagates in the goroutine that ran the
+// load. go.xchunk.org/cache/v2 exports the same error as ErrLoaderPanicked.
 var errLoaderPanicked = errors.New("cache: loader panicked")
 
-// Item is a single item of Cache.
+// Item is a single item of Cache: a value and the time it expires.
 type Item[V any] struct {
-	Value     V
-	expiresAt time.Time // zero means the item never expires
+	// Value is the cached value.
+	Value V
+	// expiresAt is when the item expires; zero means it never expires.
+	expiresAt time.Time
 }
 
 // alive reports whether the item is still valid at now.
