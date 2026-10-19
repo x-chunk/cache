@@ -104,8 +104,9 @@ const minSweepInterval = time.Minute
 // load.
 var ErrLoaderPanicked = errors.New("cache: loader panicked")
 
-// Item is a single item of Cache.
+// Item is a single item of Cache: a value and the time it expires.
 type Item[V any] struct {
+	// Value is the cached value.
 	Value V
 	// expiresAt is the clock time at which the item expires; zero means it
 	// never expires. It takes 8 bytes instead of the 24 of a time.Time,
@@ -121,10 +122,11 @@ func (i Item[V]) alive(now int64) bool {
 // Option configures a Cache created by New.
 type Option func(*options)
 
+// options collects the settings of New. Zero values mean the defaults.
 type options struct {
-	clock      Clock
-	shards     int
-	maxEntries int
+	clock      Clock // nil means the shared default clock
+	shards     int   // 0 means defaultShards()
+	maxEntries int   // 0 means no limit
 }
 
 // WithMaxEntries bounds the number of items the cache holds to n. Without

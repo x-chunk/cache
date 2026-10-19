@@ -1,13 +1,14 @@
 // Package cache provides an in-memory TTL cache that is safe for concurrent
 // use.
 //
-// It has the same API as go.xchunk.org/cache, but checks expiry
-// against a coarse clock instead of calling time.Now on every Get. That makes
-// Get of an item with a ttl several times faster, at the cost of precision:
-// an item may outlive its ttl by up to the clock's tick (DefaultTick, 1ms, for
-// the shared default clock) plus scheduler and GC delays. Items never expire
-// early. If you need exact expiry for very short ttls, use the v1 package or
-// pass a precise Clock with WithClock.
+// It has the API of go.xchunk.org/cache (v1), plus options for New
+// (WithShards, WithMaxEntries, WithClock) and GetOrSetContext. Unlike v1, it
+// checks expiry against a coarse clock instead of calling time.Now on every
+// Get. That makes Get of an item with a ttl several times faster, at the cost
+// of precision: an item may outlive its ttl by up to the clock's tick
+// (DefaultTick, 1ms, for the shared default clock) plus scheduler and GC
+// delays. Items never expire early. If you need exact expiry for very short
+// ttls, use go.xchunk.org/cache or pass a precise Clock with WithClock.
 //
 // By default all caches share one process-wide clock driven by a single
 // goroutine that is started with the first cache and runs until the process

@@ -54,6 +54,8 @@ func NewCoarseClock(tick time.Duration) *CoarseClock {
 	return c
 }
 
+// run refreshes the clock every tick until Stop is called. It runs in the
+// goroutine started by NewCoarseClock.
 func (c *CoarseClock) run(tick time.Duration) {
 	ticker := time.NewTicker(tick)
 	defer ticker.Stop()
@@ -80,6 +82,7 @@ func (c *CoarseClock) Stop() {
 	c.once.Do(func() { close(c.stop) })
 }
 
+// sharedClock is the clock returned by defaultClock, created on first use.
 var (
 	sharedClock     *CoarseClock
 	sharedClockOnce sync.Once
